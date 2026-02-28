@@ -7,6 +7,10 @@ import io
 import re
 
 st.set_page_config(page_title="Générateur de Gammes IA", layout="wide")
+
+# Intégration de l'ID session
+st.sidebar.info("ID Utilisateur : 2033065084")
+
 st.title("⚙️ Assistant de Fiabilité & Maintenance IA")
 
 # --- CONNEXION INVISIBLE AU COFFRE-FORT ---
@@ -85,15 +89,24 @@ if available_models:
                     st.error(f"Erreur avec ce modèle : {e}")
 
     # ==========================================
-    # ONGLET 2 : PLAQUE SIGNALÉTIQUE
+    # ONGLET 2 : PLAQUE SIGNALÉTIQUE (MODIFIÉ AVEC CAMÉRA)
     # ==========================================
     with tab2:
         st.header("Génération depuis le terrain")
-        uploaded_image = st.file_uploader("Chargez la photo de la plaque", type=["jpg", "jpeg", "png"])
+        
+        # Le technicien peut choisir d'importer ou de prendre une photo en direct
+        methode_capture = st.radio("Comment souhaitez-vous fournir l'image ?", ["Ouvrir l'appareil photo 📷", "Importer un fichier 📁"])
+        
+        uploaded_image = None
+        
+        if methode_capture == "Ouvrir l'appareil photo 📷":
+            uploaded_image = st.camera_input("Prenez la plaque en photo")
+        else:
+            uploaded_image = st.file_uploader("Chargez la photo de la plaque", type=["jpg", "jpeg", "png"])
 
         if uploaded_image:
             image = Image.open(uploaded_image)
-            st.image(image, caption="Plaque à analyser", width=400)
+            st.image(image, caption="Plaque prête pour l'analyse", width=400)
             
             if st.button("🔍 Identifier et Générer la Gamme"):
                 with st.spinner("Analyse optique et préparation de l'export Excel..."):
